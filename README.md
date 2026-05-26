@@ -213,7 +213,7 @@ $tokenSend = new \Okolaa\TermiiPHP\Data\Token\SendToken(
     pinTimeToLiveMinute: 5,
     pinLength: 6,
     pinPlaceHolder: "<%pin%>",
-    channel: \Okolaa\TermiiPHP\Enums\MessageChannel::DND
+    channel: \Okolaa\TermiiPHP\Enums\TokenChannel::DND,
     messageType: 'plain',
 );
 
