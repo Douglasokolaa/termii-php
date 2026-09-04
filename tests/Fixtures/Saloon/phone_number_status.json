@@ -1,0 +1,38 @@
+{
+    "statusCode": 200,
+    "headers": {
+        "Vary": [
+            "Origin",
+            "Access-Control-Request-Method",
+            "Access-Control-Request-Headers"
+        ],
+        "Content-Length": "0",
+        "Date": "Fri, 13 Dec 2024 08:30:36 GMT",
+        "Via": "1.1 google",
+        "Alt-Svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+    },
+    "data":    {
+        "result": [
+            {
+                "routeDetail": {
+                    "number": "2348753243651",
+                    "ported": 0
+                },
+                "countryDetail": {
+                    "countryCode": "234",
+                    "mobileCountryCode": "621",
+                    "iso": "NG"
+                },
+                "operatorDetail": {
+                    "operatorCode": "ANG",
+                    "operatorName": "Airtel Nigeria",
+                    "mobileNumberCode": "20",
+                    "mobileRoutingCode": "41",
+                    "carrierIdentificationCode": "23433",
+                    "lineType": "Mobile"
+                },
+                "status": 200
+            }
+        ]
+    }
+}

@@ -1,0 +1,24 @@
+{
+  "statusCode": 200,
+  "headers": {
+    "Vary": [
+      "Origin",
+      "Access-Control-Request-Method",
+      "Access-Control-Request-Headers"
+    ],
+    "Content-Type": "application\/json",
+    "Content-Length": "43",
+    "Date": "Wed, 11 Dec 2024 22:10:03 GMT",
+    "Via": "1.1 google",
+    "Alt-Svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+  },
+  "data": {
+    "status": "success",
+    "data": {
+      "pin_id": "db34d5ce-9bd4-4f10-b8ec-8ee402ccd0",
+      "otp": "522726",
+      "phone_number": "2348109077743",
+      "phone_number_other": "Termii"
+    }
+  }
+}

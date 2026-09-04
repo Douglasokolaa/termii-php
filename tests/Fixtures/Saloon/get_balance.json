@@ -1,0 +1,19 @@
+{
+    "statusCode": 200,
+    "headers": {
+        "Vary": [
+            "Origin",
+            "Access-Control-Request-Method",
+            "Access-Control-Request-Headers"
+        ],
+        "Content-Length": "0",
+        "Date": "Fri, 13 Dec 2024 07:50:39 GMT",
+        "Via": "1.1 google",
+        "Alt-Svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+    },
+    "data":   {
+        "user": "Tayo Joel",
+        "balance": 0,
+        "currency": "NGN"
+    }
+}
