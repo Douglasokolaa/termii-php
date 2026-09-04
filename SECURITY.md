@@ -96,3 +96,5 @@ So this repository is run to make your compliance cheaper, voluntarily:
 
 See [`docs/supply-chain.md`](docs/supply-chain.md) for how to verify all of
 that, and for the limitations you should know about before you rely on it.
+[`docs/vulnerability-handling.md`](docs/vulnerability-handling.md) is the
+operational runbook behind the windows above.
