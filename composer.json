@@ -10,15 +10,16 @@
   ],
   "require": {
     "php": "^8.2",
-    "saloonphp/saloon": "^3.10 || ^4.0",
-    "symfony/var-dumper": "^7.2"
+    "saloonphp/saloon": "^3.10 || ^4.0"
   },
   "require-dev": {
+    "cyclonedx/cyclonedx-php-composer": "^6.2",
+    "friendsofphp/php-cs-fixer": "^3.65",
+    "jonpurvis/lawman": "^3.1",
     "pestphp/pest": "^3.5",
     "pestphp/pest-plugin-faker": "^3.0",
-    "jonpurvis/lawman": "^3.1",
     "phpstan/phpstan": "^2.0",
-    "friendsofphp/php-cs-fixer": "^3.65"
+    "symfony/var-dumper": "^7.2"
   },
   "autoload": {
     "psr-4": {
@@ -45,7 +46,8 @@
   "prefer-stable": true,
   "config": {
     "allow-plugins": {
-      "pestphp/pest-plugin": true
+      "pestphp/pest-plugin": true,
+      "cyclonedx/cyclonedx-php-composer": true
     }
   }
 }
