@@ -1,15 +1,15 @@
 <h1 align="center">Termii PHP SDK</h1>
 
 <p align="center">
-  <img alt="Github top language" src="https://img.shields.io/github/languages/top/Douglasokolaa/termiiphp?color=56BEB8">
+  <img alt="Github top language" src="https://img.shields.io/github/languages/top/Douglasokolaa/termii-php?color=56BEB8">
 
-  <img alt="License" src="https://img.shields.io/github/license/Douglasokolaa/termiiphp?color=56BEB8">
+  <img alt="License" src="https://img.shields.io/github/license/Douglasokolaa/termii-php?color=56BEB8">
 
-  <img alt="Github issues" src="https://img.shields.io/github/issues/Douglasokolaa/termiiphp?color=56BEB8" />
+  <img alt="Github issues" src="https://img.shields.io/github/issues/Douglasokolaa/termii-php?color=56BEB8" />
 
-  <img alt="Github forks" src="https://img.shields.io/github/forks/Douglasokolaa/termiiphp?color=56BEB8" />
+  <img alt="Github forks" src="https://img.shields.io/github/forks/Douglasokolaa/termii-php?color=56BEB8" />
 
-  <!-- <img alt="Github stars" src="https://img.shields.io/github/stars/Douglasokolaa/termiiphp?color=56BEB8" /> -->
+  <!-- <img alt="Github stars" src="https://img.shields.io/github/stars/Douglasokolaa/termii-php?color=56BEB8" /> -->
 </p>
 
 <hr>
@@ -18,6 +18,7 @@
   <a href="#dart-about">About</a> &#xa0; | &#xa0; 
   <a href="#white_check_mark-requirements">Requirements</a> &#xa0; | &#xa0;
   <a href="#checkered_flag-usage">Usage</a> &#xa0; | &#xa0;
+  <a href="#lock-security-and-supply-chain">Security</a> &#xa0; | &#xa0;
   <a href="#hammer-contribution">Contribution</a> &#xa0; | &#xa0;
   <a href="#memo-license">License</a> &#xa0; | &#xa0;
   <a href="https://github.com/Douglasokolaa" target="_blank">Author</a>
@@ -375,6 +376,35 @@ if you would like to debug just the request or response respectively.
        ]
       );
    ```
+
+## :lock: Security and supply chain
+
+Vulnerabilities go to [GitHub Security Advisories][advisory], never to a
+public issue. Response windows, scope and the coordinated-disclosure default
+are in [SECURITY.md](SECURITY.md); the runbook behind them is in
+[docs/vulnerability-handling.md](docs/vulnerability-handling.md).
+
+Every tagged release publishes:
+
+- A **CycloneDX 1.6 SBOM** of the production dependency tree
+- **SLSA build provenance** and an **SBOM attestation**
+- **Sigstore** signatures over the SBOM, the source archive and the checksums
+
+```bash
+gh attestation verify termii-php-1.0.0.tar.gz --repo Douglasokolaa/termii-php
+```
+
+Production dependencies are audited on every change and weekly on a schedule.
+See [docs/supply-chain.md](docs/supply-chain.md) for how to verify the
+artifacts, how to fold the SBOM into your own, and — read this part — what
+these artifacts do **not** give you. Composer performs no signature check at
+install time, and no amount of signing upstream changes that.
+
+If you ship this package inside a commercial product on the EU market, you
+are the manufacturer under the Cyber Resilience Act and the Article 14
+obligations are yours, not mine. These artifacts exist to make that cheaper.
+
+[advisory]: https://github.com/Douglasokolaa/termii-php/security/advisories/new
 
 ## :hammer: Contribution
 
