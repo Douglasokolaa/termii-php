@@ -1,0 +1,40 @@
+version: 2
+
+updates:
+  # Composer dependencies. Production and dev are grouped separately so a
+  # production-tree change — the one that reaches consumers — is never
+  # buried in a batch of tooling bumps.
+  - package-ecosystem: composer
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      production-dependencies:
+        dependency-type: production
+      development-dependencies:
+        dependency-type: development
+        update-types:
+          - minor
+          - patch
+    labels:
+      - dependencies
+      - supply-chain
+
+  # GitHub Actions are pinned by commit SHA in this repository; without this
+  # ecosystem enabled those pins silently rot and never receive security
+  # fixes. Dependabot rewrites the SHA and the version comment together.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    labels:
+      - dependencies
+      - supply-chain
