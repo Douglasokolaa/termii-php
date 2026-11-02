@@ -66,13 +66,13 @@ abstract class TestCase extends BaseTestCase
                 'balance'    => 8,
                 'user'       => 'Seun Junior'
             ]),
-            GetSenderIdsEndpoint::class    => MockResponse::fixture('get_sender_ids.json'),
+            GetSenderIdsEndpoint::class    => MockResponse::fixture('get_sender_ids'),
             RequestSenderIdEndpoint::class => MockResponse::make(),
-            GetPhonebooksEndpoint::class   => MockResponse::fixture('get_phonebooks.json'),
+            GetPhonebooksEndpoint::class   => MockResponse::fixture('get_phonebooks'),
             CreatePhonebookEndpoint::class => MockResponse::make(),
             UpdatePhonebookEndpoint::class => MockResponse::make(),
             DeletePhonebookEndpoint::class => MockResponse::make(),
-            GetContactsEndpoint::class     => MockResponse::fixture('get_contacts.json'),
+            GetContactsEndpoint::class     => MockResponse::fixture('get_contacts'),
             AddContactEndpoint::class      => MockResponse::make([
                 'data' => [
                     'id'            => 3647982,
@@ -90,23 +90,23 @@ abstract class TestCase extends BaseTestCase
             ImportContactEndpoint::class      => MockResponse::make(),
             DeleteContactEndpoint::class      => MockResponse::make(),
             SendCampaignEndpoint::class       => MockResponse::make(),
-            GetCampaignsEndpoint::class       => MockResponse::fixture('get_campaigns.json'),
-            GetCampaignHistoryEndpoint::class => MockResponse::fixture('get_campaign_history.json'),
+            GetCampaignsEndpoint::class       => MockResponse::fixture('get_campaigns'),
+            GetCampaignHistoryEndpoint::class => MockResponse::fixture('get_campaign_history'),
             SendTokenEndpoint::class          => MockResponse::make(),
             VoiceTokenEndpoint::class         => MockResponse::make(),
             VerifyTokenEndpoint::class        => MockResponse::make(),
             EmailTokenEndpoint::class         => MockResponse::make(),
-            InAppTokenEndpoint::class         => MockResponse::fixture('in_app_token.json'),
+            InAppTokenEndpoint::class         => MockResponse::fixture('in_app_token'),
             VoiceCallEndpoint::class          => MockResponse::make(),
-            GetBalanceEndpoint::class         => MockResponse::fixture('get_balance.json'),
+            GetBalanceEndpoint::class         => MockResponse::fixture('get_balance'),
             SearchPhoneNumberEndpoint::class  => MockResponse::make([
                 'number'       => '2347089509657',
                 'status'       => 'DND blacklisted',
                 'network'      => 'Airtel Nigeria',
                 'network_code' => '62120',
             ]),
-            PhoneNumberStatusEndpoint::class => MockResponse::fixture('phone_number_status.json'),
-            HistoryEndpoint::class           => MockResponse::fixture('history.json'),
+            PhoneNumberStatusEndpoint::class => MockResponse::fixture('phone_number_status'),
+            HistoryEndpoint::class           => MockResponse::fixture('history'),
         ]);
     }
 }
