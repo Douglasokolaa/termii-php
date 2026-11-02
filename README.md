@@ -42,7 +42,7 @@ $response->json(); // ['message_id' => '...', 'message' => 'Successfully Sent', 
 ```
 
 Every method returns a [Saloon response](https://docs.saloon.dev/the-basics/responses).
-Failed requests (4xx/5xx) throw `Okolaa\TermiiPHP\RequestException`, which gives access to the response.
+Failed requests throw an exception; see [Error handling](#error-handling).
 
 `Termii::initialize()` keeps one shared connector and replaces it when called with a different
 API key or base URL. If your application serves several Termii accounts, keep one connector per
@@ -92,6 +92,7 @@ $termii->messagingApi()->sendDeviceTemplate(new DeviceTemplate(
 use Okolaa\TermiiPHP\Data\SenderId;
 
 $termii->senderIdApi()->getIds(page: 1);
+$termii->senderIdApi()->getIds(page: 1, name: 'YourBrand', status: 'active');
 
 $termii->senderIdApi()->requestId(new SenderId(
     id: 'YourBrand',
@@ -200,6 +201,64 @@ $senderIds->lastPage;
 $senderIds->total;
 ```
 
+### Error handling
+
+Failed requests throw a subclass of `Okolaa\TermiiPHP\RequestException`, so you can catch
+everything at once or handle specific cases:
+
+```php
+use Okolaa\TermiiPHP\Exceptions\AuthenticationException;
+use Okolaa\TermiiPHP\Exceptions\RateLimitException;
+use Okolaa\TermiiPHP\Exceptions\ValidationException;
+use Okolaa\TermiiPHP\RequestException;
+
+try {
+    $termii->insightApi()->getBalance();
+} catch (AuthenticationException $e) {      // 401: invalid API key
+    // ...
+} catch (ValidationException $e) {          // 400 or 422: Termii rejected the data
+    $e->getResponse()->json('message');
+} catch (RateLimitException $e) {           // 429
+    $e->retryAfter();                       // seconds, or null
+} catch (RequestException $e) {             // anything else: PermissionException (403),
+    $e->getStatus();                        // NotFoundException (404), ServerException (5xx)
+}
+```
+
+Network failures (DNS, TLS, timeouts) throw `Saloon\Exceptions\Request\FatalRequestException`.
+Its message never contains your API key.
+
+### Webhooks
+
+Termii signs each webhook with an `X-Termii-Signature` header. Verify it against the raw
+request body before you trust the event:
+
+```php
+use Okolaa\TermiiPHP\Webhooks\Events\DeliveryReport;
+use Okolaa\TermiiPHP\Webhooks\Events\DeviceStatus;
+use Okolaa\TermiiPHP\Webhooks\Events\InboundMessage;
+use Okolaa\TermiiPHP\Webhooks\WebhookEvent;
+use Okolaa\TermiiPHP\Webhooks\WebhookSignature;
+
+$payload   = file_get_contents('php://input');
+$signature = $_SERVER['HTTP_X_TERMII_SIGNATURE'] ?? null;
+
+if (! WebhookSignature::isValid($payload, $signature, 'your-termii-secret-key')) {
+    http_response_code(401);
+    exit;
+}
+
+$event = WebhookEvent::fromPayload($payload);
+
+match (true) {
+    $event instanceof DeliveryReport => $event->status,   // e.g. "Delivered"
+    $event instanceof InboundMessage => $event->message,
+    $event instanceof DeviceStatus   => $event->status,   // e.g. "disconnected"
+};
+```
+
+In Laravel, use `$request->getContent()` and `$request->header('X-Termii-Signature')`.
+
 ### Timeouts and debugging
 
 ```php
@@ -214,8 +273,7 @@ Do not leave it enabled in production or paste its output publicly.
 ## What is not covered yet
 
 These Termii endpoints are not implemented yet: WhatsApp template with media, WhatsApp
-free-form messages, email product notifications, auto failover, campaign retry, and webhook
-signature verification. You can still call any endpoint with a custom
+free-form messages, email product notifications, auto failover and campaign retry. You can still call any endpoint with a custom
 [Saloon request](https://docs.saloon.dev/the-basics/requests) sent through `$termii->send()`.
 
 ## Security

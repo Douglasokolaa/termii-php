@@ -29,16 +29,22 @@ class Message implements ConvertsDtoToRequestArray
 
     public function toRequestArray(): array
     {
-        return [
+        $payload = [
             'to'      => $this->to,
             'from'    => $this->from,
             'sms'     => $this->sms,
             'type'    => $this->type,
             'channel' => $this->channel->value,
-            'media'   => [
+        ];
+
+        // Termii only accepts media on the WhatsApp channel; omit it when no file is attached.
+        if ($this->mediaUrl !== null && $this->mediaUrl !== '') {
+            $payload['media'] = [
                 'url'     => $this->mediaUrl,
                 'caption' => $this->mediaCaption,
-            ]
-        ];
+            ];
+        }
+
+        return $payload;
     }
 }

@@ -20,7 +20,7 @@ class RequestSenderIdEndpoint extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return '/api/sender-id';
+        return '/api/sender-id/request';
     }
 
     protected function defaultBody(): array

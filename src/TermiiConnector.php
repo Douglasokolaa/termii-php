@@ -139,6 +139,16 @@ class TermiiConnector extends Connector
 
     public function getRequestException(Response $response, ?Throwable $senderException): ?Throwable
     {
-        return new RequestException($response, previous: $senderException);
+        $exception = match (true) {
+            $response->status() === 401                     => Exceptions\AuthenticationException::class,
+            $response->status() === 403                     => Exceptions\PermissionException::class,
+            $response->status() === 404                     => Exceptions\NotFoundException::class,
+            in_array($response->status(), [400, 422], true) => Exceptions\ValidationException::class,
+            $response->status() === 429                     => Exceptions\RateLimitException::class,
+            $response->serverError()                        => Exceptions\ServerException::class,
+            default                                         => RequestException::class,
+        };
+
+        return new $exception($response, previous: $senderException);
     }
 }
