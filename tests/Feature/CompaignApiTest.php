@@ -66,7 +66,7 @@ test('it can update a phonebook', closure: function() {
             $response = createTestConnector()
                 ->campaignApi()
                 ->phoneBook()
-                ->update($phonebook = new Phonebook(fake()->jobTitle(), fake()->sentence()))
+                ->update($phonebook = new Phonebook(fake()->jobTitle(), fake()->sentence(), id: (string) fake()->randomNumber()))
         )
         ->toBeInstanceOf(Response::class)
         ->and($response->status())->toBe(200)

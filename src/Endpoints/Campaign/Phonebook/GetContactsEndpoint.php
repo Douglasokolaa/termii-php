@@ -28,7 +28,7 @@ class GetContactsEndpoint extends Request
 
     public function resolveEndpoint(): string
     {
-        return "/api/phonebooks/{$this->phonebookId}/contacts";
+        return '/api/phonebooks/' . rawurlencode($this->phonebookId) . '/contacts';
     }
 
     /**

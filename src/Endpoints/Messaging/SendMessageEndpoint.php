@@ -20,7 +20,7 @@ class SendMessageEndpoint extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return '/api/sms/send/bulk';
+        return '/api/sms/send';
     }
 
     protected function defaultBody(): array

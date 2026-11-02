@@ -2,6 +2,7 @@
 
 namespace Okolaa\TermiiPHP\Endpoints\Campaign\Phonebook;
 
+use InvalidArgumentException;
 use Okolaa\TermiiPHP\Data\Phonebook;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
@@ -16,11 +17,14 @@ class UpdatePhonebookEndpoint extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return "/api/phonebooks/{$this->phonebook->id}";
+        return '/api/phonebooks/' . rawurlencode((string) $this->phonebook->id);
     }
 
     public function __construct(private readonly Phonebook $phonebook)
     {
+        if ($phonebook->id === null || $phonebook->id === '') {
+            throw new InvalidArgumentException('A phonebook id is required to update a phonebook.');
+        }
     }
 
     protected function defaultBody(): array

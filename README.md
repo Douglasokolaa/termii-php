@@ -1,15 +1,15 @@
 <h1 align="center">Termii PHP SDK</h1>
 
 <p align="center">
-  <img alt="Github top language" src="https://img.shields.io/github/languages/top/Douglasokolaa/termiiphp?color=56BEB8">
+  <img alt="Github top language" src="https://img.shields.io/github/languages/top/Douglasokolaa/termii-php?color=56BEB8">
 
-  <img alt="License" src="https://img.shields.io/github/license/Douglasokolaa/termiiphp?color=56BEB8">
+  <img alt="License" src="https://img.shields.io/github/license/Douglasokolaa/termii-php?color=56BEB8">
 
-  <img alt="Github issues" src="https://img.shields.io/github/issues/Douglasokolaa/termiiphp?color=56BEB8" />
+  <img alt="Github issues" src="https://img.shields.io/github/issues/Douglasokolaa/termii-php?color=56BEB8" />
 
-  <img alt="Github forks" src="https://img.shields.io/github/forks/Douglasokolaa/termiiphp?color=56BEB8" />
+  <img alt="Github forks" src="https://img.shields.io/github/forks/Douglasokolaa/termii-php?color=56BEB8" />
 
-  <!-- <img alt="Github stars" src="https://img.shields.io/github/stars/Douglasokolaa/termiiphp?color=56BEB8" /> -->
+  <!-- <img alt="Github stars" src="https://img.shields.io/github/stars/Douglasokolaa/termii-php?color=56BEB8" /> -->
 </p>
 
 <hr>
@@ -28,7 +28,7 @@
 ## :dart: About ##
 
 Termii PHP SDK is a robust library designed to facilitate seamless integration with
-the [Termii API](http://developer.termii.com/docs/).
+the [Termii API](https://developers.termii.com/).
 It enables developers to efficiently send SMS messages, manage sender IDs,
 handle campaigns, and verify tokens within PHP applications.
 
@@ -58,8 +58,8 @@ composer require okolaa/termiiphp
     use Okolaa\TermiiPHP\Endpoints\Messaging\GetSenderIdsEndpoint;
     use Okolaa\TermiiPHP\Termii;
     
-    // Initialize the SDK
-    $termii = Termii::initialize('api-token', 'https://termi-base-url');
+    // Initialize the SDK (the base URL must use https://)
+    $termii = Termii::initialize('api-token', 'https://your-termii-base-url');
     
     // make a request
     $response = $termii->senderIdApi()->getIds(page: 1);

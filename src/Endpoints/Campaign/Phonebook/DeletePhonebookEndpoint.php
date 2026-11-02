@@ -11,7 +11,7 @@ class DeletePhonebookEndpoint extends Request
 
     public function resolveEndpoint(): string
     {
-        return "/api/phonebooks/$this->phonebookId";
+        return '/api/phonebooks/' . rawurlencode($this->phonebookId);
     }
 
     public function __construct(private readonly string $phonebookId)
