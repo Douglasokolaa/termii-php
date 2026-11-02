@@ -3,11 +3,21 @@
   "description": "Termii Rest API php library",
   "type": "library",
   "keywords": [
-    "sendinblue",
+    "termii",
+    "termii-api",
     "sms",
+    "otp",
+    "whatsapp",
     "php",
-    "api"
+    "api",
+    "sdk"
   ],
+  "homepage": "https://github.com/Douglasokolaa/termii-php",
+  "support": {
+    "issues": "https://github.com/Douglasokolaa/termii-php/issues",
+    "source": "https://github.com/Douglasokolaa/termii-php",
+    "security": "https://github.com/Douglasokolaa/termii-php/security/policy"
+  },
   "require": {
     "php": "^8.2",
     "saloonphp/saloon": "^3.10 || ^4.0",
@@ -39,7 +49,7 @@
   ],
   "extra": {
     "branch-alias": {
-      "dev-master": "1.0-dev"
+      "dev-master": "2.x-dev"
     }
   },
   "prefer-stable": true,

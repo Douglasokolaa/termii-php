@@ -1,402 +1,240 @@
-<h1 align="center">Termii PHP SDK</h1>
+# Termii PHP SDK
 
-<p align="center">
-  <img alt="Github top language" src="https://img.shields.io/github/languages/top/Douglasokolaa/termii-php?color=56BEB8">
+[![Tests](https://github.com/Douglasokolaa/termii-php/actions/workflows/run-tests.yml/badge.svg)](https://github.com/Douglasokolaa/termii-php/actions/workflows/run-tests.yml)
+[![PHPStan](https://github.com/Douglasokolaa/termii-php/actions/workflows/phpstan.yml/badge.svg)](https://github.com/Douglasokolaa/termii-php/actions/workflows/phpstan.yml)
+[![Latest Version](https://img.shields.io/packagist/v/okolaa/termiiphp)](https://packagist.org/packages/okolaa/termiiphp)
+[![License](https://img.shields.io/github/license/Douglasokolaa/termii-php)](LICENSE.md)
 
-  <img alt="License" src="https://img.shields.io/github/license/Douglasokolaa/termii-php?color=56BEB8">
+Termii REST API PHP library, built on [Saloon](https://docs.saloon.dev/). Send SMS, WhatsApp
+and voice messages, manage sender IDs, send and verify OTP tokens, and work with phonebooks,
+contacts, campaigns and insights from the [Termii API](https://developers.termii.com/).
 
-  <img alt="Github issues" src="https://img.shields.io/github/issues/Douglasokolaa/termii-php?color=56BEB8" />
+## Requirements
 
-  <img alt="Github forks" src="https://img.shields.io/github/forks/Douglasokolaa/termii-php?color=56BEB8" />
+- PHP 8.2 or later
+- A [Termii](https://termii.com/) account, its API key, and its base URL. Each account has its own
+  base URL; find it on your Termii dashboard. It must use `https://`.
 
-  <!-- <img alt="Github stars" src="https://img.shields.io/github/stars/Douglasokolaa/termii-php?color=56BEB8" /> -->
-</p>
-
-<hr>
-
-<p align="center">
-  <a href="#dart-about">About</a> &#xa0; | &#xa0; 
-  <a href="#white_check_mark-requirements">Requirements</a> &#xa0; | &#xa0;
-  <a href="#checkered_flag-usage">Usage</a> &#xa0; | &#xa0;
-  <a href="#hammer-contribution">Contribution</a> &#xa0; | &#xa0;
-  <a href="#memo-license">License</a> &#xa0; | &#xa0;
-  <a href="https://github.com/Douglasokolaa" target="_blank">Author</a>
-</p>
-
-<br>
-
-## :dart: About ##
-
-Termii PHP SDK is a robust library designed to facilitate seamless integration with
-the [Termii API](https://developers.termii.com/).
-It enables developers to efficiently send SMS messages, manage sender IDs,
-handle campaigns, and verify tokens within PHP applications.
-
-## :white_check_mark: Requirements ##
-
-1. To use Termii's APIs, you need to first create an account for free at [termii.com](https://termii.com/).
-2. BASE URL: Your Termii account has its own base URL, which you should use in all API requests.
-   Your base URL can be found on your dashboard.
-
-3. Ensure that PHP 8.1 [PHP 8.1+](https://php.net/) or higher is installed on your system.
-
-## :hammer: Installation ##
+## Installation
 
 ```bash
-# Installation
 composer require okolaa/termiiphp
 ```
 
-## :checkered_flag: Usage ##
-
-### TLDR;
-
-> * Your API Token can be found in your Termii account settings https://app.termii.com/account/api
-
-```php
-    
-    use Okolaa\TermiiPHP\Endpoints\Messaging\GetSenderIdsEndpoint;
-    use Okolaa\TermiiPHP\Termii;
-    
-    // Initialize the SDK (the base URL must use https://)
-    $termii = Termii::initialize('api-token', 'https://your-termii-base-url');
-    
-    // make a request
-    $response = $termii->senderIdApi()->getIds(page: 1);
-    
-    // get result as array
-    $response->json();
-    
-    // Alternatively, convert result to DTO
-    $request = new GetSenderIdsEndpoint();
-    $senderIds = $request->createDtoFromResponse($response);
-    // you can now interact with data e.g.
-    $senderIds->currentPage; // int
-    $senderIds->currentPage; // int
-    $senderIds->lastPage; // int
-    $senderIds->total; //int
-    $senderIds->data; //array 
-
-```
-
-### Switch API
-
-Termii’s Messaging allows you to send messages to any country in the world across SMS and WhatsApp channel through a
-REST API. Every request made is identified by a unique ID that help our users track the status of their message either
-by receiving Delivery Reports (DLRs) over their set webhook endpoints or polling the status of the message using a
-specific endpoint.
-#### Messaging
-
-### Send Message
+## Quick start
 
 ```php
 use Okolaa\TermiiPHP\Data\Message;
+use Okolaa\TermiiPHP\Enums\MessageChannel;
 use Okolaa\TermiiPHP\Termii;
 
-$termii = Termii::initialize('api-token');
-$message = new Message(
-    to: "23490555546",
-    from: "talert",
-    sms: "Hi There, Testing Termii",
-    type: "plain",
-    channel:\Okolaa\TermiiPHP\Enums\MessageChannel::DND,
-    media: null,    
-    time_to_live: 0 
-);
-$response = $termii->messagingApi()->send($message);
+$termii = Termii::initialize('your-api-key', 'https://your-base-url.termii.com');
+
+$response = $termii->messagingApi()->send(new Message(
+    to: '2348012345678',
+    from: 'YourSender',
+    sms: 'Hello from Termii',
+    type: 'plain',
+    channel: MessageChannel::DND,
+));
+
+$response->json(); // ['message_id' => '...', 'message' => 'Successfully Sent', ...]
 ```
 
-### Send Bulk Message
+Every method returns a [Saloon response](https://docs.saloon.dev/the-basics/responses).
+Failed requests (4xx/5xx) throw `Okolaa\TermiiPHP\RequestException`, which gives access to the response.
+
+`Termii::initialize()` keeps one shared connector and replaces it when called with a different
+API key or base URL. If your application serves several Termii accounts, keep one connector per
+account: `new \Okolaa\TermiiPHP\TermiiConnector($apiKey, $baseUrl)`.
+
+## Usage
+
+### Messaging
 
 ```php
-$bulkMessage = new Message(
-    to: ["2347012345678", "2349067890123"],
-    from: "bulkAlert",
-    sms: "Bulk message content, Testing Termii",
-    type: "plain",
-    channel: \Okolaa\TermiiPHP\Enums\MessageChannel::DND, 
-    media: null,    
-    time_to_live: 1 // Example TTL in minutes
-);
-$response = $termii->messagingApi()->sendBulk($bulkMessage);
+use Okolaa\TermiiPHP\Data\DeviceTemplate;
+use Okolaa\TermiiPHP\Data\Message;
+use Okolaa\TermiiPHP\Enums\MessageChannel;
+
+// Up to 100 recipients
+$termii->messagingApi()->sendBulk(new Message(
+    to: ['2348012345678', '2348098765432'],
+    from: 'YourSender',
+    sms: 'Hello everyone',
+    type: 'plain',
+    channel: MessageChannel::Generic,
+));
+
+// WhatsApp message with media
+$termii->messagingApi()->send(new Message(
+    to: '2348012345678',
+    from: 'your-device-name',
+    sms: 'Your receipt',
+    type: 'plain',
+    channel: MessageChannel::WhatsApp,
+    mediaUrl: 'https://example.com/receipt.pdf',
+    mediaCaption: 'Receipt',
+));
+
+// WhatsApp template
+$termii->messagingApi()->sendDeviceTemplate(new DeviceTemplate(
+    phoneNumber: '2348012345678',
+    templateId: 'your-template-id',
+    data: ['product_name' => 'Termii', 'otp' => '120435', 'expiry_time' => '10 minutes'],
+    deviceId: 'your-device-id',
+));
 ```
 
-### Send Device Template
+### Sender IDs
 
 ```php
-$deviceTemplate = new \Okolaa\TermiiPHP\Data\DeviceTemplate(
-    template_id: "sampleTemplate1234",
-    phone_number: "2348076543210",
-    device_key: "ABCD1234DEVICEKEY"
-);
-$response = $termii->messagingApi()->sendDeviceTemplate($deviceTemplate);
+use Okolaa\TermiiPHP\Data\SenderId;
+
+$termii->senderIdApi()->getIds(page: 1);
+
+$termii->senderIdApi()->requestId(new SenderId(
+    id: 'YourBrand',
+    company: 'Your Company Ltd',
+    useCase: 'Your login code is 123456',
+));
 ```
 
-### Sender ID
+### Tokens (OTP)
 
 ```php
-$response = $termii->senderIdApi()->getIds($pageNumber);
-$senderId = new \Okolaa\TermiiPHP\Data\SenderId(...);
-$senderId = new \Okolaa\TermiiPHP\Data\SenderId(
-    name: "TestSender",
-    company: "TestCompany Ltd",
-    purpose: "Testing purposes for SDK"
-);
+use Okolaa\TermiiPHP\Data\Token\InAppToken;
+use Okolaa\TermiiPHP\Data\Token\SendToken;
+use Okolaa\TermiiPHP\Data\Token\VoiceToken;
+use Okolaa\TermiiPHP\Enums\PinType;
+use Okolaa\TermiiPHP\Enums\TokenChannel;
+
+$response = $termii->tokenApi()->send(new SendToken(
+    messageType: 'NUMERIC',
+    to: '2348012345678',
+    from: 'YourSender',
+    channel: TokenChannel::DND,
+    messageText: 'Your login code is < 1234 >',
+    pinPlaceHolder: '< 1234 >',
+    pinType: PinType::Numeric,
+    pinAttempts: 3,
+    pinTimeToLiveMinute: 5,
+    pinLength: 6,
+));
+$pinId = $response->json('pinId');
+
+$termii->tokenApi()->verify($pinId, '123456');
+
+$termii->tokenApi()->voice(new VoiceToken(phoneNumber: '2348012345678'));
+$termii->tokenApi()->voiceCall('2348012345678', '123456');
+$termii->tokenApi()->email('user@example.com', '123456', 'your-email-configuration-id');
+$termii->tokenApi()->inApp(new InAppToken(pinType: PinType::Numeric, phoneNumber: '2348012345678'));
+```
+
+### Phonebooks and contacts
+
+```php
+use Okolaa\TermiiPHP\Data\Contact;
+use Okolaa\TermiiPHP\Data\Phonebook;
+
+$phonebooks = $termii->campaignApi()->phoneBook();
+
+$phonebooks->get(page: 1);
+$phonebooks->create(new Phonebook(name: 'Customers', description: 'Paying customers'));
+$phonebooks->update(new Phonebook(name: 'Customers', description: 'Updated', id: 'phonebook-id'));
+$phonebooks->delete('phonebook-id');
+
+$phonebooks->getContacts('phonebook-id', page: 1);
+$phonebooks->addContact('phonebook-id', new Contact(
+    phoneNumber: '8012345678',
+    email: 'jane@example.com',
+    firstName: 'Jane',
+    lastName: 'Doe',
+    countryCode: '234',
+));
+$phonebooks->importContact('phonebook-id', '234', fopen('contacts.csv', 'r'));
+$phonebooks->deleteContact('contact-id');
 ```
 
 ### Campaigns
 
 ```php
-$campaign = new \Okolaa\TermiiPHP\Data\Campaign(
-    name: "Test Campaign",
-    message: "This is a test campaign message",
-    sender_id: "TestSenderId",
-    recipients: ["2347012345678", "2349067890123"],
-    channel: "sms", 
-    time_to_send: "2023-12-01 10:00:00"
-);
-$response = $termii->campaignApi()->send($campaign);
-$response = $termii->campaignApi()->get($campaingId, $pageNumber);
-$response = $termii->campaignApi()->getHistory($pageNumber);
-```
+use Okolaa\TermiiPHP\Data\Campaign;
+use Okolaa\TermiiPHP\Enums\MessageChannel;
 
-### Phonebook
-
-```php
-$phonebook = new \Okolaa\TermiiPHP\Data\Phonebook(
-    name: "Test Phonebook",
-    description: "Sample description for test phonebook"
-);
-$responseCreate = $termii->campaignApi()->phoneBook()->create($phonebook);
-$responseUpdate = $termii->campaignApi()->phoneBook()->update($phonebook);
-$response = $termii->campaignApi()->phoneBook()->get();
-$response = $termii->campaignApi()->phoneBook()->delete($phonebook->id);
-```
-
-### Contact
-
-```php
-$contact = new \Okolaa\TermiiPHP\Data\Contact(
-    phone_number: "2347012345678",
-    first_name: "John",
-    last_name: "Doe",
-    email: "johndoe@example.com",
-    phonebook_id: "testPhonebook123"
-);
-$responseAddContact = $termii->campaignApi()->phoneBook()->addContact($contact);
-$importedContactsResponse = $termii->campaignApi()->phoneBook()->importContact($phonebook->id, 234, 'path/to/your/file.csv');
-
-$fetchedContactsResponse = $termii->campaignApi()->phoneBook()->getContacts($phonebook->id, $pageNumber);
-$deleteContactResponse = $termii->campaignApi()->phoneBook()->deleteContact($contact->id);
-```
-
-## Token API
-
-The `TokenApi` in the Termii PHP SDK enables businesses to **generate**, **send**, and **verify One-Time Passwords (
-OTPs)**.
-It's a powerful feature tailored for two-factor authentication and secure user verification processes.
-
-### Send Token
-
-```php
-use Okolaa\TermiiPHP\Data\TokenSend;
-use Okolaa\TermiiPHP\Termii;
-
-$termii = Termii::initialize('api-token');
-
-$tokenSend = new \Okolaa\TermiiPHP\Data\Token\SendToken(
-    to: "23490555546",
-    from: "talert",
-    messageText: "Your verification code is <%pin%>",
-    pinType: \Okolaa\TermiiPHP\Enums\PinType::AlphaNumeric,
-    pinAttempts: 3,
-    pinTimeToLiveMinute: 5,
-    pinLength: 6,
-    pinPlaceHolder: "<%pin%>",
-    channel: \Okolaa\TermiiPHP\Enums\TokenChannel::DND,
+$termii->campaignApi()->send(new Campaign(
+    phonebookId: 'phonebook-id',
+    senderId: 'YourSender',
+    channel: MessageChannel::Generic,
+    campaignType: 'personalized',
+    countryCode: '234',
+    message: 'Our sale starts today',
     messageType: 'plain',
-);
+    runAt: '2026-12-01 10:00',
+    status: 'scheduled',
+));
 
-$response = $termii->tokenApi()->send($tokenSend);
+$termii->campaignApi()->get(page: 1);
+$termii->campaignApi()->getHistory('campaign-id', page: 1);
 ```
 
-### Voice Token
-
-The voice token API enables you to generate and trigger one-time passwords (OTP) through the voice channel to a phone
-number.
+### Insights
 
 ```php
-use Okolaa\TermiiPHP\Data\Token\VoiceToken;
-use Okolaa\TermiiPHP\Termii;
-
-$termii = Termii::initialize('api-token');
-
-$voiceToken = new VoiceToken(
-    phoneNumber: "2348000000000",
-    pin_length: 6
-);
-
-$response = $termii->tokenApi()->voice($voiceToken);
+$termii->insightApi()->getBalance();
+$termii->insightApi()->searchPhoneNumber('2348012345678');      // DND status
+$termii->insightApi()->statusOfPhoneNumber('8012345678', 'NG'); // number status
+$termii->insightApi()->history();                                // or ->history('message-id')
 ```
 
-### Voice Call Token
+### Paginated results as objects
 
-The voice call API enables you to send messages from your application through our voice channel to a phone number.
+List endpoints can map their response to typed objects:
 
 ```php
-use Okolaa\TermiiPHP\Data\Token\VoiceToken;
-use Okolaa\TermiiPHP\Termii;
+$senderIds = $termii->senderIdApi()->getIds(page: 1)->dto(); // PaginatedData<SenderId>
 
-$termii = Termii::initialize('api-token');
-
-$response = $termii->tokenApi()->voiceCall('2348000000000', '12345);
+$senderIds->data;        // SenderId[]
+$senderIds->currentPage;
+$senderIds->lastPage;
+$senderIds->total;
 ```
 
-### Verify Token
-
-Verify token API, checks tokens sent to customers and returns a response confirming the status of the token.
+### Timeouts and debugging
 
 ```php
-use Okolaa\TermiiPHP\Termii;
+$termii->config()->merge(['connect_timeout' => 60, 'timeout' => 120]);
 
-$termii = Termii::initialize('api-token');
-
-$response = $termii->tokenApi()->verify('pinId', 'the-pin-code');
+$termii->debug(); // dumps each request and response
 ```
 
-### Email Token
+`debug()` prints the API key, because Termii requires it in the request.
+Do not leave it enabled in production or paste its output publicly.
 
-The email token API enables you to send one-time-passwords from your application through our email channel to an email
-address.
+## What is not covered yet
 
-```php
-use Okolaa\TermiiPHP\Termii;
+These Termii endpoints are not implemented yet: WhatsApp template with media, WhatsApp
+free-form messages, email product notifications, auto failover, campaign retry, and webhook
+signature verification. You can still call any endpoint with a custom
+[Saloon request](https://docs.saloon.dev/the-basics/requests) sent through `$termii->send()`.
 
-$termii = Termii::initialize('api-token');
+## Security
 
-$response = $termii->tokenApi()->email('test@test.com', 'the-pin-code', 'email-config-id');
-```
+Please report vulnerabilities privately; see [SECURITY.md](SECURITY.md).
 
-### In-App Token
+## Contributing
 
-This API returns OTP codes in JSON format which can be used within any web or mobile app.
-
-```php
-use Okolaa\TermiiPHP\Termii;
-
-$termii = Termii::initialize('api-token');
-
-$payload = new \Okolaa\TermiiPHP\Data\Token\InAppToken(
-            pinType: \Okolaa\TermiiPHP\Enums\PinType::Numeric,
-            phoneNumber: '2348000000000'
-         );
-
-$response = $termii->tokenApi()->inApp($payload);
-```
-
-## Advanced Configuration
-
-- Customizing Requests
-
-```php
-use Okolaa\TermiiPHP\Endpoints\Messaging\RequestSenderIdEndpoint;
-use Okolaa\TermiiPHP\Termii;
-
-$senderIdData = new \Okolaa\TermiiPHP\Data\SenderId(
-    'okolaa',
-    'Okolaa INC',
-    'To be used for sending alerts to customers.'
-);
-$request = new RequestSenderIdEndpoint($senderIdData);
-$request->query()->merge(['page' => 4]);
-$request->headers()->merge(...);
-$request->body()->merge(...);
-$request->config()->merge(...);
-
-$client = Termii::initialize('api-token');
-$response = $client->send($request);
-
-```
-
-- The Response Class
-
-```php
-use Okolaa\TermiiPHP\Termii;
-$termii = Termii::initialize('api-token');
-$response = $termii->send($request);
-
-$response->json(); // returns array/scalar value
-$response->collect(); // returns Illuminate/Collection or scalar value
-$response->object(); // returns php object
-$response->dto(); // returns Data objects e.g. PaginationData, SenderId, Message, Phonebook
-$response->headers(); // returns all the response headers
-$response->stream(); // returns the body as a stream
-```
-
-## Troubleshooting
-The simplest way to debug a request and response is to use the debug()
-method on your connector before sending a request.
-This will output an easy-to-understand array of the request and the response.
-```php
-    use Okolaa\TermiiPHP\Termii;
-    $termii = Termii::initialize('api-token'));
-    // You can provide the die argument if you would like to terminate the application after receiving the response.
-    $termii->debug(die: false);
-```
-You may also use debugRequest and debugResponse independently
-if you would like to debug just the request or response respectively.
-   ```php
-      $termii->debugRequest(); // $connector->debugRequest(die: true);
-      $termii->debugResponse(); // $connector->debugResponse(die: true);
-   ```
-
-### Common Issues
-1. Invalid API Key:
-   Ensure you’ve set a valid API key. You can validate this by logging into the Termii Dashboard.
-   
-2. SSL Certificate Issues:
-    If you encounter SSL errors in local environments, ensure your system’s CA certificates are up to date.
-    Alternatively, you can disable the SSL certificate verification as shown below:
-    ```php
-        $termii->config()
-            ->merge([
-               'verify' => false
-            ]);
-    ```
-3. Timeouts:
-   Increase the timeout values if the Termii API is slow to respond:
-   ```php
-      use Okolaa\TermiiPHP\Termii;
-      $termii = Termii::initialize('api-token'));
-      $termii->config()->merge(
-       [
-           'connect_timeout' => 60,
-           'timeout' => 120
-       ]
-      );
-   ```
-
-## :hammer: Contribution
-
-```shell
-# fork and Clone the fork project
-# Access the folder
-cd termiiphp
-
-# Install dependencies
-composer Install
-
-# Run test
+```bash
+git clone https://github.com/Douglasokolaa/termii-php.git
+cd termii-php
+composer install
 ./vendor/bin/pest
+./vendor/bin/phpstan analyze
+./vendor/bin/php-cs-fixer check --allow-risky=yes
 ```
 
-## :memo: License ##
+Tests run against recorded fixtures and never call the live API.
 
-This project is under license from MIT. For more details, see the [LICENSE](LICENSE.md) file.
+## License
 
-Made with :heart: by <a href="https://github.com/Douglasokolaa" target="_blank">Douglas Okolaa</a>
-
-&#xa0;
-
-
-<a href="#top">Back to top</a>
+MIT. See [LICENSE.md](LICENSE.md).
