@@ -93,6 +93,6 @@ test('it can request sender id', closure: function() {
         ->and($response->status())->toBe(200)
         ->and($response->getPendingRequest()->body()->all())
         ->toHaveKey('company', 'Demo Inc')
-        ->toHaveKey('usecase', 'send notifications')
+        ->toHaveKey('use_case', 'send notifications')
         ->toHaveKey('sender_id', 'demo-inc');
 });

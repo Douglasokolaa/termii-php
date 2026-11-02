@@ -46,7 +46,7 @@ class Campaign implements Contracts\ConvertsArrayToDTO, ConvertsDtoToRequestArra
             'country_code'        => $this->countryCode,
             'sender_id'           => $this->senderId,
             'message'             => $this->message,
-            'channel'             => $this->channel->value,
+            'channel'             => $this->channel?->value,
             'message_type'        => $this->messageType,
             'phonebook_id'        => $this->phonebookId,
             'delimiter'           => $this->delimiter,

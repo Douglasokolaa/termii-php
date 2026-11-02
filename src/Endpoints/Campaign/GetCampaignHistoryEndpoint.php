@@ -28,7 +28,7 @@ class GetCampaignHistoryEndpoint extends Request
 
     public function resolveEndpoint(): string
     {
-        return "/api/sms/campaigns/$this->campaignId";
+        return '/api/sms/campaigns/' . rawurlencode($this->campaignId);
     }
 
     /**

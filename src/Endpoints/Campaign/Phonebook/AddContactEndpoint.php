@@ -26,7 +26,7 @@ class AddContactEndpoint extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return "/api/phonebooks/{$this->phonebookId}/contacts";
+        return '/api/phonebooks/' . rawurlencode($this->phonebookId) . '/contacts';
     }
 
     public function createDtoFromResponse(Response $response): Contact

@@ -11,7 +11,7 @@ class DeleteContactEndpoint extends Request
 
     public function resolveEndpoint(): string
     {
-        return "/api/phonebook/contact/$this->contactId";
+        return '/api/phonebook/contact/' . rawurlencode($this->contactId);
     }
 
     public function __construct(private readonly string $contactId)

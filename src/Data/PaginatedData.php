@@ -36,6 +36,10 @@ class PaginatedData
     public static function fromResponse(Response $response, string $dtoClass): PaginatedData
     {
         $pagination = $response->json();
+
+        if (isset($pagination['content']) && is_array($pagination['content'])) {
+            return self::fromPage($pagination, $dtoClass);
+        }
         /** @var array<int, D> $data */
         $data = array_map(
             fn (array $item) => $dtoClass::fromArray($item),
@@ -50,6 +54,31 @@ class PaginatedData
             perPage: $pagination['per_page']         ?? $pagination['meta']['per_page'],
             from: $pagination['from']                ?? $pagination['meta']['from'],
             to: $pagination['to']                    ?? $pagination['meta']['to'],
+        );
+    }
+
+    /**
+     * @param  array<string, mixed> $page
+     * @param  class-string<D>      $dtoClass
+     * @return self<D>
+     */
+    private static function fromPage(array $page, string $dtoClass): PaginatedData
+    {
+        /** @var array<int, D> $data */
+        $data = array_map(fn (array $item) => $dtoClass::fromArray($item), $page['content']);
+
+        $perPage = (int) ($page['size'] ?? count($data));
+        $offset  = (int) ($page['pageable']['offset'] ?? ((int) ($page['number'] ?? 0) * $perPage));
+        $count   = count($data);
+
+        return new PaginatedData(
+            data: $data,
+            currentPage: (int) ($page['number'] ?? 0) + 1,
+            lastPage: max(1, (int) ($page['totalPages'] ?? 1)),
+            total: (int) ($page['totalElements'] ?? $count),
+            perPage: $perPage,
+            from: $count > 0 ? $offset + 1 : 0,
+            to: $offset                + $count,
         );
     }
 }

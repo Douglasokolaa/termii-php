@@ -38,12 +38,12 @@ class Contact implements ConvertsArrayToDTO, ConvertsDtoToRequestArray
     public function toRequestArray(): array
     {
         return [
-            'phonebook_name' => $this->phoneNumber,
-            'email_address'  => $this->email,
-            'first_name'     => $this->firstName,
-            'last_name'      => $this->lastName,
-            'company'        => $this->companyName,
-            'country_code'   => $this->countryCode,
+            'phone_number'  => $this->phoneNumber,
+            'email_address' => $this->email,
+            'first_name'    => $this->firstName,
+            'last_name'     => $this->lastName,
+            'company'       => $this->companyName,
+            'country_code'  => $this->countryCode,
         ];
     }
 }

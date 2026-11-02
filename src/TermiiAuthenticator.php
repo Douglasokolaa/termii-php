@@ -5,14 +5,23 @@ namespace Okolaa\TermiiPHP;
 use Saloon\Contracts\Authenticator;
 use Saloon\Contracts\Body\BodyRepository;
 use Saloon\Contracts\Body\MergeableBody;
+use Saloon\Data\MultipartValue;
 use Saloon\Enums\Method;
 use Saloon\Http\PendingRequest;
 use Saloon\Repositories\Body\MultipartBodyRepository;
 
 class TermiiAuthenticator implements Authenticator
 {
-    public function __construct(protected readonly string $apiKey)
+    public function __construct(#[\SensitiveParameter] protected readonly string $apiKey)
     {
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function __debugInfo(): array
+    {
+        return ['apiKey' => '[redacted]'];
     }
 
     /**
@@ -34,7 +43,7 @@ class TermiiAuthenticator implements Authenticator
     {
         return match ($method) {
             Method::GET, Method::DELETE => true,
-            default => false,
+            default                     => false,
         };
     }
 
@@ -44,15 +53,15 @@ class TermiiAuthenticator implements Authenticator
     private function mergeApiKeyIntoBody(BodyRepository $body): void
     {
         if ($body instanceof MultipartBodyRepository) {
-            $body->add(
-                'contact',
-                json_encode(
-                    json_decode($body->get('contact')->value, true)
-                    + [
-                        'api_key' => $this->apiKey
-                    ]
-                )
-            );
+            $contact = $body->get('contact');
+            $fields  = $contact instanceof MultipartValue && is_string($contact->value)
+                ? json_decode($contact->value, true, flags: JSON_THROW_ON_ERROR)
+                : [];
+
+            $body->add('contact', json_encode(
+                ['api_key' => $this->apiKey] + (is_array($fields) ? $fields : []),
+                JSON_THROW_ON_ERROR
+            ));
         } elseif ($body instanceof MergeableBody) {
             $body->merge(['api_key' => $this->apiKey]);
         }

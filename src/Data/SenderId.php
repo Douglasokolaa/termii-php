@@ -20,10 +20,10 @@ class SenderId implements ConvertsArrayToDTO, ConvertsDtoToRequestArray
     {
         return new self(
             id: $data['sender_id'],
-            company: $data['company'],
-            useCase: $data['usecase'],
-            country: $data['country'],
-            status: $data['status']
+            company: $data['company']  ?? null,
+            useCase: $data['use_case'] ?? $data['usecase'] ?? null,
+            country: $data['country']  ?? null,
+            status: $data['status']    ?? null
         );
     }
 
@@ -31,7 +31,7 @@ class SenderId implements ConvertsArrayToDTO, ConvertsDtoToRequestArray
     {
         return [
             'sender_id' => $this->id,
-            'usecase'   => $this->useCase,
+            'use_case'  => $this->useCase,
             'company'   => $this->company
         ];
     }

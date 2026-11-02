@@ -15,8 +15,11 @@ class GetSenderIdsEndpoint extends Request
 
     protected Method $method = Method::GET;
 
-    public function __construct(protected int $page)
-    {
+    public function __construct(
+        protected int $page,
+        protected ?string $name = null,
+        protected ?string $status = null,
+    ) {
     }
 
     public function resolveEndpoint(): string
@@ -27,7 +30,9 @@ class GetSenderIdsEndpoint extends Request
     protected function defaultQuery(): array
     {
         return [
-            'page' => $this->page
+            'page'   => $this->page,
+            'name'   => $this->name,
+            'status' => $this->status,
         ];
     }
 
